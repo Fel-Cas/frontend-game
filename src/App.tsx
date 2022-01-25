@@ -31,6 +31,7 @@ function App() {
 
   const [isInRoom, setInRoom]=useState(false);
   const [isGameStart, setGameStart]=useState(false);
+  const [isFinishGame, setFinishGame] = useState(false);
   
    let connecSocket=async()=>{
       let socket=socketService.connect('http://localhost:9000').catch(err=>{
@@ -42,7 +43,7 @@ function App() {
         connecSocket();
     },[])
 
-    const gameContextValue:IGameContext={isInRoom, setInRoom,isGameStart,setGameStart};
+    const gameContextValue:IGameContext={isInRoom, setInRoom,isGameStart,setGameStart, isFinishGame, setFinishGame};
   return (
     <GameContext.Provider value={gameContextValue}>
       <AppContainer>

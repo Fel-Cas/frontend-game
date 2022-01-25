@@ -92,6 +92,19 @@ const WordButton = styled.button`
   const Score=styled.div`
       font-size:1rem;
   `;
+
+  const GameFinish = styled.div`
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    background-color: #1b5e20;
+    color: #fff;
+  `;
 export type ILetters=Array<string|null>;
 export type ICorrectWord=number;
 export interface IStartGame{
@@ -103,6 +116,8 @@ export function Game(){
     const [words, setWords]:any=useState<ILetters>([]);
     const [word, setWord]=useState('');
     const {isGameStart, setGameStart}=useContext(gameContext);
+    const {isFinishGame, setFinishGame} = useContext(gameContext);
+    const [winner, setWinner] = useState('');
 
     let [youScore, setYouScore]=useState(0);
     let [opponentScore, setOpponentScore]=useState(0);
@@ -134,7 +149,8 @@ export function Game(){
           youScore++;
           words.splice(words.indexOf(word.toUpperCase()),1);
           setYouScore(youScore);
-          gameService.correctWord(socketService.socket, youScore);
+          gameService.correctWord(socketService.socket, youScore);  
+          handleWinner();
         }      
         $inputWord.value='';
         setWord('');
@@ -148,32 +164,37 @@ export function Game(){
       }
     }
 
-    let handleWinner= () => {
-      setTimeout(() => {
-        if(socketService.socket){
-          if(youScore === numberWords){
-            gameService.gameFinish(socketService.socket, 'You Lost');
-            alert("You Won");
-          }
-          if(opponentScore === numberWords){
-            gameService.gameFinish(socketService.socket, 'You Won');
-            alert("You Lost");
-          }
+    let handleWinner= () => {      
+      let $gameFinish:any = document.getElementById("game-finish");
+      if(socketService.socket){
+        if(youScore === numberWords){
+          gameService.gameFinish(socketService.socket, 'You Lost');
+          setFinishGame(true);
+          setWinner("You won");
+          $gameFinish.style.display = "block";
         }
-      }, 2000);      
+        if(opponentScore === numberWords){
+          gameService.gameFinish(socketService.socket, 'You Won');
+          setWinner("You Lost");
+          setFinishGame(true);
+          $gameFinish.style.display = "block";
+        }
+      }
     }
-
+    
     let handleGameFinish= () => {
       if(socketService.socket){
         gameService.onGameFinish(socketService.socket, (message) => {
-          alert(message);
+          setWinner(message);
+          setFinishGame(true);
+          let $gameFinish:any = document.getElementById("game-finish");
+          $gameFinish.style.display = "block";
         })
       }
     }
     
     useEffect(()=>{
-      handleOpponentCorrectWord();      
-      handleWinner();
+      handleOpponentCorrectWord();
       handleStartGame();
       handleGameFinish();
     },[])
@@ -207,10 +228,11 @@ export function Game(){
           
         <form onSubmit={handleVerifyWord}>
             <WordContainer>
-                <WordInput id='inputWord' placeholder="Entre la palabra" value={word} onChange={handleWord}/>
-                <WordButton type="submit" onClick={handleWinner}>Enviar</WordButton>                
+                <WordInput id='inputWord' disabled={isFinishGame} placeholder="Entre la palabra" value={word} onChange={handleWord}/>
+                <WordButton type="submit" hidden={isFinishGame} >Enviar</WordButton>                
             </WordContainer>
         </form>)};
+        <GameFinish id="game-finish">Juego Terminado, {winner}</GameFinish>
     </GameContainer>    
     );
 }

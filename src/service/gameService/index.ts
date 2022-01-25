@@ -20,7 +20,7 @@ class GameService{
     }
 
     public async gameFinish(socket:Socket, message: string){
-        socket.emit('game_finish', message);
+        socket.emit('game_finish', {message});
     }
 
     public async onGameFinish(socket:Socket, listener: (message:string) => void){
