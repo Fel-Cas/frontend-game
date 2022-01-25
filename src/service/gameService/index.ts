@@ -18,6 +18,14 @@ class GameService{
     public async onCorrectWord(socket:Socket,listener:(corectWords:ICorrectWord)=>void){
         socket.on('on_correct_word',({correctWords})=>listener(correctWords));
     }
+
+    public async gameFinish(socket:Socket, message: string){
+        socket.emit('game_finish', message);
+    }
+
+    public async onGameFinish(socket:Socket, listener: (message:string) => void){
+        socket.on('on_game_finish', ({message}) => listener(message))
+    }
 }
 
 export default new GameService();

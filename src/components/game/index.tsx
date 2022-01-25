@@ -106,7 +106,7 @@ export function Game(){
 
     let [youScore, setYouScore]=useState(0);
     let [opponentScore, setOpponentScore]=useState(0);
-    let [numberWords,setNumberWords]=useState(0);
+    let [numberWords,setNumberWords]=useState(99);
 
     let handleStartGame=()=>{
         if(socketService.socket){
@@ -148,10 +148,37 @@ export function Game(){
       }
     }
 
+    let handleWinner= () => {
+      setTimeout(() => {
+        if(socketService.socket){
+          if(youScore === numberWords){
+            gameService.gameFinish(socketService.socket, 'You Lost');
+            alert("You Won");
+          }
+          if(opponentScore === numberWords){
+            gameService.gameFinish(socketService.socket, 'You Won');
+            alert("You Lost");
+          }
+        }
+      }, 2000);      
+    }
+
+    let handleGameFinish= () => {
+      if(socketService.socket){
+        gameService.onGameFinish(socketService.socket, (message) => {
+          alert(message);
+        })
+      }
+    }
+    
     useEffect(()=>{
+      handleOpponentCorrectWord();      
+      handleWinner();
       handleStartGame();
-      handleOpponentCorrectWord();
+      handleGameFinish();
     },[])
+
+
     return(
     <GameContainer>
       {(!isGameStart) ? <Title> Espere a el otro usuario para empezar a jugar</Title>:
@@ -181,7 +208,7 @@ export function Game(){
         <form onSubmit={handleVerifyWord}>
             <WordContainer>
                 <WordInput id='inputWord' placeholder="Entre la palabra" value={word} onChange={handleWord}/>
-                <WordButton type="submit" >Enviar</WordButton>                
+                <WordButton type="submit" onClick={handleWinner}>Enviar</WordButton>                
             </WordContainer>
         </form>)};
     </GameContainer>    
