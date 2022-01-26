@@ -34,7 +34,7 @@ function App() {
   const [isFinishGame, setFinishGame] = useState(false);
   
    let connecSocket=async()=>{
-      let socket=socketService.connect('http://localhost:9000').catch(err=>{
+      let socket=socketService.connect('https://game-server-anagrama-1.herokuapp.com/').catch(err=>{
         alert(err);
       });
     }
