@@ -64,8 +64,6 @@ export function JoinRoom(){
         .catch((err)=>{
           alert(err);
         });
-        
-        console.log('dfdff')
         if(playerJoin){setInRoom(true);}
         setJoin(false);
     }

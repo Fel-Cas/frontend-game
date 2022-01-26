@@ -193,10 +193,20 @@ export function Game(){
       }
     }
     
+    let handleGameDisconnect=()=>{
+      if(socketService.socket){
+        gameService.onDisconnect(socketService.socket,(message)=>{
+          alert(message);
+          window.location.replace('');
+        })
+      }
+    }
+
     useEffect(()=>{
       handleOpponentCorrectWord();
       handleStartGame();
       handleGameFinish();
+      handleGameDisconnect();
     },[])
 
 

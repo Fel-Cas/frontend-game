@@ -26,6 +26,10 @@ class GameService{
     public async onGameFinish(socket:Socket, listener: (message:string) => void){
         socket.on('on_game_finish', ({message}) => listener(message))
     }
+
+    public async onDisconnect(socket:Socket,listener: (message:string) => void){
+        socket.on('player_discconect',({message}) => listener(message));
+    }
 }
 
 export default new GameService();
